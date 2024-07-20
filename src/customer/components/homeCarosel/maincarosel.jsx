@@ -4,7 +4,7 @@ import { MainCarosalData } from './mainCaroselData'; // Adjust the path to the c
 
 const MainCarousel = () => {
     let items = MainCarosalData.map((item) => (
-        <img className='cursor-pointer' role='presentation' src={item.image} alt=''/>
+        <img className='cursor-pointer ' role='presentation' src={item.image} alt=''/>
     ));
 
     return (
