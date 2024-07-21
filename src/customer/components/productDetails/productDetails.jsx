@@ -24,6 +24,10 @@
 import { useState } from 'react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { Radio, RadioGroup } from '@headlessui/react'
+import { Grid, Typography, Rating, Box, LinearProgress } from '@mui/material'
+import { mens_kurta } from '../../../data/mens_kurta'
+import HomeSectionCard from '../homeSectionCard/homeSectionCard'
+import ProductReviewCard from './productReviewCard'
 
 const product = {
   name: 'Basic Tee 6-Pack',
@@ -144,65 +148,33 @@ export default function ProductDetails() {
         <div className="lg: col-span-1 maxt-auto max-w-2xl px-4 pb-16 sm:px-6 lg:max-w-7xl lg:px-8 lg:pb-24">
           <div className="lg:col-span-2 ">
             <h1 className="text-lg lg:text-xl font-semibold text-gray-900">{product.name}</h1>
+            <h2 className="text-lg lg:text-xl  text-gray-900 capcity-60">{product.name}</h2>
           </div>
 
           {/* Options */}
           <div className="mt-4 lg:row-span-3 lg:mt-0">
             <h2 className="sr-only">Product information</h2>
-            <p className="text-3xl tracking-tight text-gray-900">{product.price}</p>
+            <div className='flex space-x-5 items-center text-lg lg:text-xl'>
+              <p className='font-semibold'>
+              Rs 199
+              </p>
+              <p className='capacity-50 line-through'>
+                Rs 211
+              </p>
+              <p className='text-green-600 font-semibold'>5% off</p>
+            </div>
 
             {/* Reviews */}
-            <div className="mt-6">
-              <h3 className="sr-only">Reviews</h3>
-              <div className="flex items-center">
-                <div className="flex items-center">
-                  {[0, 1, 2, 3, 4].map((rating) => (
-                    <StarIcon
-                      key={rating}
-                      aria-hidden="true"
-                      className={classNames(
-                        reviews.average > rating ? 'text-gray-900' : 'text-gray-200',
-                        'h-5 w-5 flex-shrink-0',
-                      )}
-                    />
-                  ))}
-                </div>
-                <p className="sr-only">{reviews.average} out of 5 stars</p>
-                <a href={reviews.href} className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                  {reviews.totalCount} reviews
-                </a>
+            <div className='mt-6'>
+              <div className='flex items-center space-x-3'>
+                <Rating name="read-only" value={5.5} readOnly />
+                <p className='opacity-50 text-semibold'>5439 Ratings</p>
+                <p className='ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500'>76 Reviews</p>
               </div>
             </div>
 
             <form className="mt-10">
-              {/* Colors */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-900">Color</h3>
-
-                <fieldset aria-label="Choose a color" className="mt-4">
-                  <RadioGroup value={selectedColor} onChange={setSelectedColor} className="flex items-center space-x-3">
-                    {product.colors.map((color) => (
-                      <Radio
-                        key={color.name}
-                        value={color}
-                        aria-label={color.name}
-                        className={classNames(
-                          color.selectedClass,
-                          'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none data-[checked]:ring-2 data-[focus]:data-[checked]:ring data-[focus]:data-[checked]:ring-offset-1',
-                        )}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={classNames(
-                            color.class,
-                            'h-8 w-8 rounded-full border border-black border-opacity-10',
-                          )}
-                        />
-                      </Radio>
-                    ))}
-                  </RadioGroup>
-                </fieldset>
-              </div>
+              
 
               {/* Sizes */}
               <div className="mt-10">
@@ -276,33 +248,86 @@ export default function ProductDetails() {
                 <p className="text-base text-gray-900">{product.description}</p>
               </div>
             </div>
-
-            <div className="mt-10">
-              <h3 className="text-sm font-medium text-gray-900">Highlights</h3>
-
-              <div className="mt-4">
-                <ul role="list" className="list-disc space-y-2 pl-4 text-sm">
-                  {product.highlights.map((highlight) => (
-                    <li key={highlight} className="text-gray-400">
-                      <span className="text-gray-600">{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-10">
-              <h2 className="text-sm font-medium text-gray-900">Details</h2>
-
-              <div className="mt-4 space-y-6">
-                <p className="text-sm text-gray-600">{product.details}</p>
-              </div>
-            </div>
+            
           </div>
         </div>
 </section>
        
+            {/* {rating and reviews} */}
+            <section>
+              <h1 className='font-semibold text-lg pb-4 pt-10'>
+                Recent reviews and ratings
+              </h1>
+              <div className='border p-5'>
+                    <Grid container spacing={7}>
+                        <Grid item xs={7}>
+                          <div className='space-y-5'>
+                            {[1,1,1].map((item)=><ProductReviewCard/>)}
+                          </div>
+                        </Grid>
+                        <Grid item xs={5}>
+                          <h1 className='text-xl font-semibold pb-2'>
+                            Product rating
+                          </h1>
+                          <div className='flex items-center space-x-3'>
+                            <Rating value={4.6} precision={.5} readonly />
+                            <p>54890 Ratings</p>
+                          </div>
+                          <Box className="mt-5 space-y-3">
+                            <Grid container allignItem="center" gap={2}>
+                              <Grid item xs={2}>
+                                <p>Exellent</p>
+                              </Grid>
+                              <Grid item xs={7}mt={1.3}>
+                                <LinearProgress sx={{bgcolor:"#d0d0d0",borderRadius:4,height:7}} variant='determinate' value={40} color='success'/>
+                              </Grid>
+                            </Grid>
 
+                            <Grid container allignItem="center" gap={2}>
+                              <Grid item xs={2}>
+                                <p>Very Good</p>
+                              </Grid>
+                              <Grid item xs={7}mt={1.3}>
+                                <LinearProgress sx={{bgcolor:"#d0d0d0",borderRadius:4,height:7}} variant='determinate' value={30} color='success'/>
+                              </Grid>
+                            </Grid>
+                            <Grid container allignItem="center" gap={2}>
+                              <Grid item xs={2}>
+                                <p>Good</p>
+                              </Grid>
+                              <Grid item xs={7}mt={1.3}>
+                                <LinearProgress sx={{bgcolor:"#d0d0d0",borderRadius:4,height:7}} variant='determinate' value={25} className='bg-yellow-300'/>
+                              </Grid>
+                            </Grid>
+                            <Grid container allignItem="center" gap={2}>
+                              <Grid item xs={2}>
+                                <p>Average</p>
+                              </Grid>
+                              <Grid item xs={7}mt={1.3}>
+                                <LinearProgress sx={{bgcolor:"#d0d0d0",borderRadius:4,height:7}} variant='determinate' value={20} color='warning'/>
+                              </Grid>
+                            </Grid>
+                            <Grid container allignItem="center" gap={2}>
+                              <Grid item xs={2}>
+                                <p>Poor</p>
+                              </Grid>
+                              <Grid item xs={7}mt={1.3}>
+                                <LinearProgress sx={{bgcolor:"#d0d0d0",borderRadius:4,height:7}} variant='determinate' value={15} color='error'/>
+                              </Grid>
+                            </Grid>
+
+                          </Box>
+                        </Grid>
+                    </Grid>
+              </div>
+            </section>
+            {/* {similar producr} */}
+            <section className='pt-10 '>
+                    <h1 className='pb-4'>similar product</h1>
+                    <div className='flex flex-wrap space-y-5'>
+                        {mens_kurta.map((item)=><HomeSectionCard product={item}/>)}
+                    </div>
+            </section>
       </div>
     </div>
   )
