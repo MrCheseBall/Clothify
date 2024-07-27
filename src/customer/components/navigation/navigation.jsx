@@ -14,7 +14,7 @@
 */
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useState,useState } from 'react'
 import {
   Dialog,
   DialogBackdrop,
@@ -30,6 +30,11 @@ import {
   TabPanels,
 } from '@headlessui/react'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Link,useLocation, useNavigate } from 'react-router-dom'
+
+function classNames(...classes){
+  return classes.filter(Boolean).join(" ");
+}
 
 const navigation = {
   categories: [
@@ -156,6 +161,11 @@ const navigation = {
 
 export default function Navigation() {
   const [open, setOpen] = useState(false)
+  const navigate=useNavigate()
+  const handleCategoryClick=(category,section,item,close)=>{
+    navigate(`${category.id}/${section.id}/${item.id}`)
+    close();
+  }
 
   return (
     <div className="bg-white " >

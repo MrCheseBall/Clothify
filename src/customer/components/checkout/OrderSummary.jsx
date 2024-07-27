@@ -1,18 +1,18 @@
 import React from 'react'
-import CartItem from './CartItem'
-import { useNavigate } from 'react-router-dom'
+import AddressCard from '../addressCard/AddressCard'
+import CartItem from '../cart/CartItem'
 
-const Cart = () => {
-    const navigate=useNavigate();
-    const handleCheckout=()=>{
-        navigate("/checkout?step=2");
-    }
-    return (
-        
-        <div>
-            <div className='lg:grid grid-cols-3 lg:px-16 relative'>
+const OrderSummary = () => {
+  return (
+    <div>
+      <div className='p-5 shadow-lg rounded-s-md border'>
+          <AddressCard/>
+      </div>
+
+      <div>
+            <div className='lg:grid grid-cols-3 mt-10 relative'>
                 <div className='col-span-2'>
-                    {[1,1,1,1].map((item)=><CartItem />)}
+                    {[1,1,1,1].map((item)=><CartItem/>)}
                 </div>
                 <div className='px-5 sticky top-0 h-[100vh] mt-5 lg:mt-0'>
                     <div className='border'>
@@ -45,16 +45,17 @@ const Cart = () => {
                         </div>
                         </div>
                         <button
-                            onClick={handleCheckout}
                             type="submit"
                             className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            CHECKOUT
+                            Add to Cart
                         </button>
                     </div>
                 </div>
             </div>
 
         </div>
-    )
+    </div>
+  )
 }
-export default Cart
+
+export default OrderSummary
