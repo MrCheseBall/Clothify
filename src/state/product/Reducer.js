@@ -7,8 +7,8 @@ const initialState={
     loading:false,
     error:null
 }
-export const customerProductReducer=(state=initialState,action)=>{
-    switch(action.type){
+export const customerProductReducer=(state=initialState,action)=>{ 
+    switch(action.type){ 
         case FIND_PRODUCTS_REQUEST:
         case FIND_PRODUCT_BY_ID_REQUEST:
             return {...state,loading:true,error:null}

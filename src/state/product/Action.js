@@ -7,7 +7,7 @@ export const findProducts=(reqData)=>async(dispatch)=>{
     const {colors,sizes,minPrice,maxPrice,minDiscount,category,stock,sort,pageNumber,pageSize}=reqData;
     try {
         const {data}= await api.get(`/api/products`)
-        console.log("product data",data)
+        console.log("product data2",data)
         // {
         //     ?color=${colors}&size${sizes}&minPrice=${minPrice}&maxPrice=${maxPrice}&minDiscount=${minDiscount}&category=${category}&stock=${stock}&sort=${sort}&pageNumber=${pageNumber}&pageSize=${pageSize}
         // }
@@ -18,13 +18,15 @@ export const findProducts=(reqData)=>async(dispatch)=>{
 }
 
 
-export const findProductsById=(reqData)=>(dispatch)=>{
+export const findProductsById=(reqData)=>async(dispatch)=>{
     dispatch({type:FIND_PRODUCT_BY_ID_REQUEST})
 
     const {productId}=reqData;
-    console.log("1")
+    // console.log(productId)
+    // console.log("1")
     try {
-        const {data}=api.get(`/api/products/id/${productId}`)
+        const {data}=await api.get(`/api/products/id/${productId}`)
+        console.log("data ",data)
 
         dispatch({type:FIND_PRODUCT_BY_ID_SUCCESS,payload:data})
     } catch (error) {

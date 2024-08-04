@@ -17,7 +17,8 @@
 'use client'
 import { mens_kurta } from '../../../data/mens_kurta'
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import Pagination from '@mui/material/Pagination';
 
 import {
   Dialog,
@@ -55,7 +56,7 @@ export default function Product() {
   const location = useLocation();
   const param = useParams();
   const dispatch = useDispatch()
-  // const {product}=use
+  const {product}=useSelector(store=>store)
 
   const decodedQueryString = decodeURIComponent(location.search);
   const searchParams = new URLSearchParams(decodedQueryString);
@@ -67,6 +68,13 @@ export default function Product() {
   const pageNumber = searchParams.get("page") || 1;
   const stock = searchParams.get("stock")
 
+
+  const handlePaginationChange=(event,value)=>{
+    const searchParams=new URLSearchParams(location.search)
+    const query=searchParams.toString();
+    searchParams.set("page",value)
+    navigate({search:`?${query}`})
+  }
   // const sizeValue=searchParams.get()
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
@@ -106,6 +114,7 @@ export default function Product() {
     dispatch(findProducts(data))
 
   }, [param.levelThree, colorValue, sizeValue, priceValue, discount, sortValue, pageNumber, stock])
+
   return (
     <div className="bg-white">
       <div>
@@ -321,9 +330,14 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-5 w-full">
                 <div className='flex flex-wrap justify-center bg-white p-5'>
-                  {mens_kurta.map((item) => <ProductCard product={item} />)}
+                  {product.products&& product.products?.content?.map((item) => <ProductCard product={item} />)}
                 </div>
               </div>
+            </div>
+          </section>
+          <section className='w-full px=[3.6rem]'>
+            <div className='px-4 py-5 flex justify-center'>
+            <Pagination count={product.products?.totalPages} variant="outlined" color="secondary" onChange={handlePaginationChange}/>
             </div>
           </section>
         </main>
