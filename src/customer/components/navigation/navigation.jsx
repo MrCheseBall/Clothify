@@ -14,7 +14,7 @@
 */
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import {
   Dialog,
   DialogBackdrop,
@@ -33,7 +33,10 @@ import {
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Avatar, Button, Menu, MenuItem } from '@mui/material'
 import { deepPurple } from '@mui/material/colors'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import AuthModal from '../../auth/AuthModal'
+import { useSelector,useDispatch } from 'react-redux'
+import { getUser, logout } from '../../../state/auth/Action'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -128,7 +131,7 @@ const navigation = {
             { name: 'T-Shirts', href: '#' },
             { name: 'Jackets', href: '#' },
             { name: 'Activewear', href: '#' },
-            { name: 'Browse All', href: '#' },
+            { name: 'Mens kuta', href: '#' },
           ],
         },
         {
@@ -168,7 +171,9 @@ export default function Navigation() {
   const [anchorEl, setAnchorEl] = useState(null);
   const openUserMenu = Boolean(anchorEl);
   const jwt = localStorage.getItem("jwt");
-
+  const {auth}=useSelector(store=>store)
+  const dispatch=useDispatch();
+  const location=useLocation();
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -180,10 +185,36 @@ export default function Navigation() {
     setOpenAuthModel(true);
   }
 
+  const handleClose = () => {
+    setOpenAuthModel(false);
+    
+  }
+
   const navigate=useNavigate();
   const handleCategoryClick = (category, section, item, closeFunction) => {
     navigate(`${category.id}/${section.id}/${item.id}`)
     closeFunction();
+  }
+
+  useEffect(()=>{
+    if(jwt){
+      dispatch(getUser(jwt))
+    }
+  },[jwt,auth.jwt])
+  // console.log(jwt)
+  useEffect(()=>{
+    if(auth.user){
+      handleClose()
+    }
+    if(location.pathname==="/login"||location.pathname==="/register"){
+      navigate(-1)
+    }
+  },[auth.user])
+
+  const handleLogout=()=>{
+    console.log("logout")
+    dispatch(logout())
+    handleCloseUserMenu()
   }
 
   return (
@@ -458,7 +489,7 @@ export default function Navigation() {
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
 
-                  {true ? (
+                  {auth.user?.firstName ? (
                     <div>
                       <Avatar
                         className='text-white'
@@ -472,7 +503,7 @@ export default function Navigation() {
                           cursor: "pointer",
                         }}
                       >
-                        S
+                        {auth.user?.firstName[0].toUpperCase()}
                       </Avatar>
                       {/* <Button>
                       Dashboard
@@ -492,7 +523,7 @@ export default function Navigation() {
                         <MenuItem>
                           My Orders
                         </MenuItem>
-                        <MenuItem>Logout</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
 
                       </Menu>
                     </div>
@@ -532,6 +563,7 @@ export default function Navigation() {
           </div>
         </nav>
       </header>
+      <AuthModal handleClose={handleClose} open={openAuthModel}/>
     </div>
   )
 }

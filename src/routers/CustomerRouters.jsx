@@ -13,17 +13,22 @@ import OrderDetails from '../customer/components/order/OrderDetails'
 const CustomerRouters = () => {
   return (
     <div>
-        <div>
-          <Navigation/>
-        </div>
+      <div>
+        <Navigation />
+      </div>
       <Routes>
-            <Route path='/' element={<HomePage/>}></Route>
-            <Route path='/cart' element={<Cart/>}></Route>
-            <Route path='/:lavelOne/:lavelTwo/:lavelThree' element={<Product/>}></Route>
-            <Route path='/:product/:productId/' element={<ProductDetails/>}></Route>
-            <Route path='/Checkout' element={<Checkout/>}></Route>
-            <Route path='/account/order' element={<Order/>}></Route>
-            <Route path='/account/order/:orderId' element={<OrderDetails/>}></Route>
+        <Route path='/login' element={<HomePage />}></Route>
+        <Route path='/register' element={<HomePage />}></Route>
+
+        <Route path='/' element={<HomePage />}></Route>
+        <Route path='/cart' element={<Cart />}></Route>
+        <Route path='/:lavelOne/:lavelTwo/:lavelThree' element={<Product />}></Route>
+        <Route path='/:product/:productId/' element={<ProductDetails />}></Route>
+        <Route path='/Checkout' element={<Checkout />}></Route>
+        <Route path='/account/order' element={<Order />}></Route>
+        <Route path='/account/order/:orderId' element={<OrderDetails />}></Route>
+
+{/* <Route path='/' element={<Product />}></Route> */}
 
         {/* <Product/> */}
         {/* <ProductDetails/> */}
@@ -34,7 +39,7 @@ const CustomerRouters = () => {
 
       </Routes>
       <div>
-      <Footer/>
+        <Footer />
       </div>
     </div>
   )

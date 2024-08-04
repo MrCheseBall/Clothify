@@ -16,7 +16,9 @@
 */
 'use client'
 import { mens_kurta } from '../../../data/mens_kurta'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+
 import {
   Dialog,
   DialogBackdrop,
@@ -32,87 +34,78 @@ import {
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
 import ProductCard from './productCard'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { filters, singleFilter } from './FilterData'
+import { findProducts } from '../../../state/product/Action'
 
 const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Best Rating', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false },
+
   { name: 'Price: Low to High', href: '#', current: false },
   { name: 'Price: High to Low', href: '#', current: false },
 ]
-const subCategories = [
-  { name: 'Shirt', href: '#' },
-  { name: 'Pants', href: '#' },
-  { name: 'Shoes', href: '#' },
-  { name: 'Jacket', href: '#' },
-  { name: 'Trowser', href: '#' },
-]
-const filters = [
-  {
-    id: 'color',
-    name: 'Color',
-    options: [
-      { value: 'white', label: 'White', checked: false },
-      { value: 'beige', label: 'Beige', checked: false },
-      { value: 'blue', label: 'Blue', checked: true },
-      { value: 'brown', label: 'Brown', checked: false },
-      { value: 'green', label: 'Green', checked: false },
-      { value: 'purple', label: 'Purple', checked: false },
-    ],
-  },
-  {
-    id: 'category',
-    name: 'Category',
-    options: [
-      { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-      { value: 'sale', label: 'Sale', checked: false },
-      { value: 'travel', label: 'Travel', checked: true },
-      { value: 'organization', label: 'Organization', checked: false },
-      { value: 'accessories', label: 'Accessories', checked: false },
-    ],
-  },
-  {
-    id: 'size',
-    name: 'Size',
-    options: [
-      { value: '2l', label: '2L', checked: false },
-      { value: '6l', label: '6L', checked: false },
-      { value: '12l', label: '12L', checked: false },
-      { value: '18l', label: '18L', checked: false },
-      { value: '20l', label: '20L', checked: false },
-      { value: '40l', label: '40L', checked: true },
-    ],
-  },
-]
+
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function Product() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const param = useParams();
+  const dispatch = useDispatch()
+  // const {product}=use
+
+  const decodedQueryString = decodeURIComponent(location.search);
+  const searchParams = new URLSearchParams(decodedQueryString);
+  const colorValue = searchParams.get("color");
+  const sizeValue = searchParams.get("size")
+  const priceValue = searchParams.get("price")
+  const discount = searchParams.get("discount")
+  const sortValue = searchParams.get("sort")
+  const pageNumber = searchParams.get("page") || 1;
+  const stock = searchParams.get("stock")
+
+  // const sizeValue=searchParams.get()
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
-  const navigate=useNavigate();
-  const location=useLocation();
-  const handleFilter=(value,sectionId)=>{
-    const searchParams=new URLSearchParams(location.search)
-    let filterValue=searchParams.getAll(sectionId);
-    if(filterValue.length>0&&filterValue[0].split(",").includes(value)){
-      filterValue=filterValue[0].split(",").filter((item)=>item!==value);
-      if(filterValue.length==0){
+  const handleFilter = (value, sectionId) => {
+    const searchParams = new URLSearchParams(location.search)
+    let filterValue = searchParams.getAll(sectionId);
+    if (filterValue.length > 0 && filterValue[0].split(",").includes(value)) {
+      filterValue = filterValue[0].split(",").filter((item) => item !== value);
+      if (filterValue.length == 0) {
         searchParams.delete(sectionId)
       }
     }
-    else{
+    else {
       filterValue.push(value);
     }
-    if(filterValue.length>0){
-      searchParams.set(sectionId,filterValue.join(","));
-      const query=searchParams.toString();
-      navigate({search:`?${query}`})
+    if (filterValue.length > 0) {
+      searchParams.set(sectionId, filterValue.join(","));
+      const query = searchParams.toString();
+      navigate({ search: `?${query}` })
     }
   }
+
+  useEffect(() => {
+    const [minPrice, maxPrice] = priceValue == null ? [0, 10000] : priceValue.split("-").map(Number);
+    const data = {
+      category: param.levelThree,
+      colors: colorValue || [],
+      sizes: sizeValue || [],
+      minPrice,
+      maxPrice,
+      minDiscount: discount || 0,
+      sort: sortValue || "price_low",
+      pageNumber: pageNumber - 1,
+      pageSize: 10,
+      stock: stock
+    }
+    dispatch(findProducts(data))
+
+  }, [param.levelThree, colorValue, sizeValue, priceValue, discount, sortValue, pageNumber, stock])
   return (
     <div className="bg-white">
       <div>
@@ -144,7 +137,7 @@ export default function Product() {
               <form className="mt-4 border-t border-gray-200">
                 <h3 className="sr-only">Categories</h3>
                 <ul role="list" className="px-2 py-3 font-medium text-gray-900">
-                  {subCategories.map((category) => (
+                  {singleFilter.map((category) => (
                     <li key={category.name}>
                       <a href={category.href} className="block px-2 py-3">
                         {category.name}
@@ -255,13 +248,7 @@ export default function Product() {
               {/* Filters */}
               <form className="hidden lg:block">
                 <h3 className="sr-only">Categories</h3>
-                <ul role="list" className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
-                  {subCategories.map((category) => (
-                    <li key={category.name}>
-                      <a href={category.href}>{category.name}</a>
-                    </li>
-                  ))}
-                </ul>
+
 
                 {filters.map((section) => (
                   <Disclosure key={section.id} as="div" className="border-b border-gray-200 py-6">
@@ -279,7 +266,40 @@ export default function Product() {
                         {section.options.map((option, optionIdx) => (
                           <div key={option.value} className="flex items-center">
                             <input
-                              onChange={()=>handleFilter(option.value,section.id)}
+                              onChange={() => handleFilter(option.value, section.id)}
+                              defaultValue={option.value}
+                              defaultChecked={option.checked}
+                              id={`filter-${section.id}-${optionIdx}`}
+                              name={`${section.id}[]`}
+                              type="checkbox"
+                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <label htmlFor={`filter-${section.id}-${optionIdx}`} className="ml-3 text-sm text-gray-600">
+                              {option.label}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </DisclosurePanel>
+                  </Disclosure>
+                ))}
+                {singleFilter.map((section) => (
+                  <Disclosure key={section.id} as="div" className="border-b border-gray-200 py-6">
+                    <h3 className="-my-3 flow-root">
+                      <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                        <span className="font-medium text-gray-900">{section.name}</span>
+                        <span className="ml-6 flex items-center">
+                          <PlusIcon aria-hidden="true" className="h-5 w-5 group-data-[open]:hidden" />
+                          <MinusIcon aria-hidden="true" className="h-5 w-5 [.group:not([data-open])_&]:hidden" />
+                        </span>
+                      </DisclosureButton>
+                    </h3>
+                    <DisclosurePanel className="pt-6">
+                      <div className="space-y-4">
+                        {section.options.map((option, optionIdx) => (
+                          <div key={option.value} className="flex items-center">
+                            <input
+                              onChange={() => handleFilter(option.value, section.id)}
                               defaultValue={option.value}
                               defaultChecked={option.checked}
                               id={`filter-${section.id}-${optionIdx}`}
@@ -301,7 +321,7 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-5 w-full">
                 <div className='flex flex-wrap justify-center bg-white p-5'>
-                {mens_kurta.map((item)=><ProductCard product={item}/>)}
+                  {mens_kurta.map((item) => <ProductCard product={item} />)}
                 </div>
               </div>
             </div>
